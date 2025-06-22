@@ -64,63 +64,77 @@ const StaffRegistrationForm = () => {
     return true;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
   e.preventDefault();
-  if (!validateForm()) return;
-  
   setIsSubmitting(true);
   
-  // Create a unique callback name
-  const callbackName = `jsonp_${Date.now()}`;
-  
-  // Create the script tag
-  const script = document.createElement('script');
-  
-  // Build the URL with parameters
-  const params = new URLSearchParams();
-  params.append('callback', callbackName);
-  params.append('organization', formData.organization);
-  params.append('employeeId', formData.employeeId);
-  params.append('dateOfJoining', formData.dateOfJoining);
-  params.append('name', formData.name);
-  params.append('nrc', formData.nrc);
-  params.append('mobileNumber', formData.mobileNumber);
-  params.append('email', formData.email || '');
-  
-  script.src = `https://script.google.com/macros/s/AKfycbxAil5cYXOnjJBoWmL0JEz8nYJmjepW-Ssfj7gL5ZjYrKSpmjz5P0w52HYLm8tBAjFG6w/exec?${params.toString()}`;
-  
-  // Set up the callback function
-  window[callbackName] = (response) => {
-    // Clean up
-    delete window[callbackName];
-    document.body.removeChild(script);
+  try {
+    // Create a hidden iframe
+    const iframe = document.createElement('iframe');
+    iframe.name = 'hidden-form-iframe';
+    iframe.style.display = 'none';
+    document.body.appendChild(iframe);
     
-    if (response.status === 'success') {
-      setSubmissionStatus({ type: 'success', message: 'Registration successful!' });
-      setFormData({
-        organization: '',
-        employeeId: '',
-        dateOfJoining: '',
-        name: '',
-        nrc: '',
-        mobileNumber: '',
-        email: ''
-      });
-    } else {
-      setSubmissionStatus({ type: 'error', message: response.message || 'Submission failed' });
-    }
+    // Create a form
+    const form = document.createElement('form');
+    form.action = 'https://script.google.com/macros/s/AKfycbxAil5cYXOnjJBoWmL0JEz8nYJmjepW-Ssfj7gL5ZjYrKSpmjz5P0w52HYLm8tBAjFG6w/exec';
+    form.method = 'POST';
+    form.target = 'hidden-form-iframe';
+    form.enctype = 'application/x-www-form-urlencoded';
+    
+    // Add form data as hidden inputs
+    const addField = (name, value) => {
+      const input = document.createElement('input');
+      input.type = 'hidden';
+      input.name = name;
+      input.value = value;
+      form.appendChild(input);
+    };
+    
+    addField('organization', formData.organization);
+    addField('employeeId', formData.employeeId);
+    addField('dateOfJoining', formData.dateOfJoining);
+    addField('name', formData.name);
+    addField('nrc', formData.nrc);
+    addField('mobileNumber', formData.mobileNumber);
+    addField('email', formData.email || '');
+    
+    // Submit the form
+    document.body.appendChild(form);
+    form.submit();
+    
+    // Assume success (can't get response with this method)
+    setSubmissionStatus({ 
+      type: 'success', 
+      message: 'Registration submitted successfully!' 
+    });
+    
+    // Reset form
+    setFormData({
+      organization: '',
+      employeeId: '',
+      dateOfJoining: '',
+      name: '',
+      nrc: '',
+      mobileNumber: '',
+      email: ''
+    });
+    
+  } catch (error) {
+    setSubmissionStatus({ 
+      type: 'error', 
+      message: 'Error submitting form. Please try again.' 
+    });
+  } finally {
     setIsSubmitting(false);
-  };
-  
-  // Handle errors
-  script.onerror = () => {
-    delete window[callbackName];
-    document.body.removeChild(script);
-    setSubmissionStatus({ type: 'error', message: 'Network error. Please try again.' });
-    setIsSubmitting(false);
-  };
-  
-  document.body.appendChild(script);
+    setTimeout(() => {
+      const iframe = document.querySelector('iframe[name="hidden-form-iframe"]');
+      const form = document.querySelector('form[target="hidden-form-iframe"]');
+      if (iframe) document.body.removeChild(iframe);
+      if (form) document.body.removeChild(form);
+      setSubmissionStatus(null);
+    }, 5000);
+  }
 };
 
   return (
