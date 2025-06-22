@@ -78,7 +78,7 @@ const StaffRegistrationForm = () => {
     
     // Create a form
     const form = document.createElement('form');
-    form.action = 'https://script.google.com/macros/s/AKfycbxAil5cYXOnjJBoWmL0JEz8nYJmjepW-Ssfj7gL5ZjYrKSpmjz5P0w52HYLm8tBAjFG6w/exec';
+    form.action = 'https://script.google.com/macros/s/AKfycbzi5MvwlDZ4vyaeNIYWZp0OEn4ZRjAfvCqj7BvAw9hHs37Ldmch-AzO22HUfwLs3JUneg/exec';
     form.method = 'POST';
     form.target = 'hidden-form-iframe';
     form.enctype = 'application/x-www-form-urlencoded';
