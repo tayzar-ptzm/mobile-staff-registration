@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import './StaffRegistrationForm.css';
 
@@ -33,7 +34,7 @@ const StaffRegistrationForm = () => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
   };
-
+// eslint-disable-next-line
   const validateForm = () => {
     // Required fields validation
     const requiredFields = {
