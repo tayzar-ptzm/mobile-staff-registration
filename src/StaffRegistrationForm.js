@@ -64,35 +64,39 @@ const StaffRegistrationForm = () => {
     return true;
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleSubmit = (e) => {
+  e.preventDefault();
+  if (!validateForm()) return;
+  
+  setIsSubmitting(true);
+  
+  // Create a unique callback name
+  const callbackName = `jsonp_${Date.now()}`;
+  
+  // Create the script tag
+  const script = document.createElement('script');
+  
+  // Build the URL with parameters
+  const params = new URLSearchParams();
+  params.append('callback', callbackName);
+  params.append('organization', formData.organization);
+  params.append('employeeId', formData.employeeId);
+  params.append('dateOfJoining', formData.dateOfJoining);
+  params.append('name', formData.name);
+  params.append('nrc', formData.nrc);
+  params.append('mobileNumber', formData.mobileNumber);
+  params.append('email', formData.email || '');
+  
+  script.src = `https://script.google.com/macros/s/AKfycbxAil5cYXOnjJBoWmL0JEz8nYJmjepW-Ssfj7gL5ZjYrKSpmjz5P0w52HYLm8tBAjFG6w/exec?${params.toString()}`;
+  
+  // Set up the callback function
+  window[callbackName] = (response) => {
+    // Clean up
+    delete window[callbackName];
+    document.body.removeChild(script);
     
-    if (!validateForm()) return;
-    
-    setIsSubmitting(true);
-    
-    try {
-      const scriptUrl = 'https://script.google.com/macros/s/AKfycbxAil5cYXOnjJBoWmL0JEz8nYJmjepW-Ssfj7gL5ZjYrKSpmjz5P0w52HYLm8tBAjFG6w/exec';
-      
-      const response = await fetch(scriptUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      });
-
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-
-      const result = await response.json();
-      
-      if (result.status !== 'success') {
-        throw new Error(result.message || 'Submission failed');
-      }
-
-      // Reset form on success
+    if (response.status === 'success') {
+      setSubmissionStatus({ type: 'success', message: 'Registration successful!' });
       setFormData({
         organization: '',
         employeeId: '',
@@ -102,23 +106,22 @@ const StaffRegistrationForm = () => {
         mobileNumber: '',
         email: ''
       });
-
-      setSubmissionStatus({ 
-        type: 'success', 
-        message: 'Registration submitted successfully!' 
-      });
-
-    } catch (error) {
-      console.error('Submission error:', error);
-      setSubmissionStatus({ 
-        type: 'error', 
-        message: 'Failed to submit. Please try again later.' 
-      });
-    } finally {
-      setIsSubmitting(false);
-      setTimeout(() => setSubmissionStatus(null), 5000);
+    } else {
+      setSubmissionStatus({ type: 'error', message: response.message || 'Submission failed' });
     }
+    setIsSubmitting(false);
   };
+  
+  // Handle errors
+  script.onerror = () => {
+    delete window[callbackName];
+    document.body.removeChild(script);
+    setSubmissionStatus({ type: 'error', message: 'Network error. Please try again.' });
+    setIsSubmitting(false);
+  };
+  
+  document.body.appendChild(script);
+};
 
   return (
     <div className="form-container">
