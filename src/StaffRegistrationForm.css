@@ -1,4 +1,3 @@
-/* ===== Base Styles ===== */
 :root {
   --primary: #4361ee;
   --primary-dark: #3a56d4;
@@ -24,9 +23,10 @@ body {
   line-height: 1.6;
   background-color: #f5f7ff;
   color: var(--dark);
+  padding: 0;
+  margin: 0;
 }
 
-/* ===== Form Container ===== */
 .form-container {
   display: flex;
   justify-content: center;
@@ -61,7 +61,6 @@ body {
   font-size: 1rem;
 }
 
-/* ===== Form Elements ===== */
 .staff-form {
   display: flex;
   flex-direction: column;
@@ -102,7 +101,6 @@ select.form-control {
   background-size: 1rem;
 }
 
-/* ===== Button Styles ===== */
 .submit-btn {
   background-color: var(--primary);
   color: white;
@@ -144,7 +142,6 @@ select.form-control {
   to { transform: rotate(360deg); }
 }
 
-/* ===== Alert Messages ===== */
 .alert {
   padding: 1rem;
   border-radius: var(--border-radius);
@@ -167,7 +164,6 @@ select.form-control {
   border: 1px solid var(--error);
 }
 
-/* Responsive Design */
 @media (max-width: 768px) {
   .form-container {
     padding: 1rem;
