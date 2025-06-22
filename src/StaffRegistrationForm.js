@@ -65,46 +65,52 @@ const StaffRegistrationForm = () => {
     return true;
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
   e.preventDefault();
   setIsSubmitting(true);
   
-  try {
-    // Create a hidden iframe
-    const iframe = document.createElement('iframe');
-    iframe.name = 'hidden-form-iframe';
-    iframe.style.display = 'none';
-    document.body.appendChild(iframe);
+  // Create a hidden iframe
+  const iframe = document.createElement('iframe');
+  iframe.name = 'hidden-form-target';
+  iframe.style.display = 'none';
+  document.body.appendChild(iframe);
+  
+  // Create a form
+  const form = document.createElement('form');
+  form.action = 'https://script.google.com/macros/s/AKfycbzi5MvwlDZ4vyaeNIYWZp0OEn4ZRjAfvCqj7BvAw9hHs37Ldmch-AzO22HUfwLs3JUneg/exec';
+  form.method = 'POST';
+  form.target = 'hidden-form-target';
+  form.enctype = 'application/x-www-form-urlencoded'; // Changed encoding type
+  
+  // Helper function to add form fields
+  const addField = (name, value) => {
+    const input = document.createElement('input');
+    input.type = 'hidden';
+    input.name = name;
+    input.value = value;
+    form.appendChild(input);
+  };
+  
+  // Add all form fields
+  addField('organization', formData.organization);
+  addField('employeeId', formData.employeeId);
+  addField('dateOfJoining', formData.dateOfJoining);
+  addField('name', formData.name);
+  addField('nrc', formData.nrc);
+  addField('mobileNumber', formData.mobileNumber);
+  addField('email', formData.email || '');
+
+  // Submit the form
+  document.body.appendChild(form);
+  form.submit();
+
+  // Set timeout to handle the response
+  const timeout = setTimeout(() => {
+    // Clean up
+    document.body.removeChild(form);
+    document.body.removeChild(iframe);
     
-    // Create a form
-    const form = document.createElement('form');
-    form.action = 'https://script.google.com/macros/s/AKfycbzi5MvwlDZ4vyaeNIYWZp0OEn4ZRjAfvCqj7BvAw9hHs37Ldmch-AzO22HUfwLs3JUneg/exec';
-    form.method = 'POST';
-    form.target = 'hidden-form-iframe';
-    form.enctype = 'application/x-www-form-urlencoded';
-    
-    // Add form data as hidden inputs
-    const addField = (name, value) => {
-      const input = document.createElement('input');
-      input.type = 'hidden';
-      input.name = name;
-      input.value = value;
-      form.appendChild(input);
-    };
-    
-    addField('organization', formData.organization);
-    addField('employeeId', formData.employeeId);
-    addField('dateOfJoining', formData.dateOfJoining);
-    addField('name', formData.name);
-    addField('nrc', formData.nrc);
-    addField('mobileNumber', formData.mobileNumber);
-    addField('email', formData.email || '');
-    
-    // Submit the form
-    document.body.appendChild(form);
-    form.submit();
-    
-    // Assume success (can't get response with this method)
+    // Assume success (since we can't get response with this method)
     setSubmissionStatus({ 
       type: 'success', 
       message: 'Registration submitted successfully!' 
@@ -121,21 +127,17 @@ const StaffRegistrationForm = () => {
       email: ''
     });
     
-  } catch (error) {
-    setSubmissionStatus({ 
-      type: 'error', 
-      message: 'Error submitting form. Please try again.' 
-    });
-  } finally {
     setIsSubmitting(false);
-    setTimeout(() => {
-      const iframe = document.querySelector('iframe[name="hidden-form-iframe"]');
-      const form = document.querySelector('form[target="hidden-form-iframe"]');
-      if (iframe) document.body.removeChild(iframe);
-      if (form) document.body.removeChild(form);
-      setSubmissionStatus(null);
-    }, 5000);
-  }
+    clearTimeout(timeout);
+  }, 3000); // Wait 3 seconds for submission to complete
+
+  // Error handling
+  iframe.onload = () => {
+    clearTimeout(timeout);
+    document.body.removeChild(form);
+    document.body.removeChild(iframe);
+    setIsSubmitting(false);
+  };
 };
 
   return (
