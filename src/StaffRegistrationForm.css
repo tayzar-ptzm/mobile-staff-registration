@@ -44,7 +44,7 @@ body {
   border-radius: var(--border-radius);
   box-shadow: var(--box-shadow);
   width: 100%;
-  max-width: 600px;
+  max-width: 700px;
   padding: 30px;
   border-top: 4px solid var(--primary-dark-red);
 }
@@ -66,7 +66,7 @@ body {
 .form-main-title {
   color: var(--primary-dark-red);
   margin-bottom: 5px;
-  font-size: 24px;
+  font-size: 20px;
   font-weight: 700;
 }
 
@@ -232,4 +232,91 @@ select.modern-form-control {
   .modern-submit-btn {
     padding: 10px;
   }
+}
+
+/* ===== Success Popup Styles ===== */
+.success-popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.success-popup {
+  background-color: white;
+  border-radius: var(--border-radius);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  width: 90%;
+  max-width: 400px;
+  padding: 25px;
+  text-align: center;
+  animation: popIn 0.3s ease-out;
+}
+
+@keyframes popIn {
+  from { transform: scale(0.8); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+.popup-header {
+  margin-bottom: 15px;
+}
+
+.popup-header svg {
+  margin-bottom: 10px;
+}
+
+.popup-header h3 {
+  color: var(--primary-dark-red);
+  margin-bottom: 5px;
+}
+
+.popup-body p {
+  margin-bottom: 10px;
+  color: var(--dark);
+  line-height: 1.5;
+}
+
+.popup-close-btn {
+  background-color: var(--primary-dark-red);
+  color: white;
+  border: none;
+  border-radius: var(--border-radius);
+  padding: 10px 20px;
+  margin-top: 20px;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.popup-close-btn:hover {
+  background-color: var(--primary-red);
+}
+
+/* ===== Awareness Message Styles ===== */
+.awareness-message {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 12px;
+  background-color: rgba(67, 97, 238, 0.1);
+  border-radius: var(--border-radius);
+  margin: 15px 0;
+  border-left: 3px solid var(--primary-red);
+}
+
+.awareness-message svg {
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.awareness-message span {
+  font-size: 13px;
+  color: var(--dark);
+  line-height: 1.4;
 }

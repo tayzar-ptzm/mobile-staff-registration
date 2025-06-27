@@ -4,17 +4,20 @@ import companyLogo from './AYA Bank Production.png'; // Replace with your image 
 
 const StaffRegistrationForm = () => {
   const organizations = [
-    'AYA Trust',
-    'AYA Sompo',
-    'AMI Life Assurance',
-    'Hotel Max',
-    'Max Energy',
-    'Max Highway',
-    'Max Myanmar Construction',
-    'Max Cement',
-    'Max Well Trading',
-    'Max Logistics',
-    'Shwe Yaung Pya Agro'
+    'AYA Bank PCL',
+    'AYA Trust Securities Co., Ltd.',
+    'AYA SOMPO Insurance Co., Ltd.',
+    'Max Myanmar Holding Co., Ltd.',
+    'Max (Myanmar) Construction Co., Ltd.',
+    'Max (Myanmar) Hotel Co., Ltd.',
+    'Max (Myanmar) Service Co., Ltd.',
+    'Max Energy Co., Ltd.',
+    'Max Highway Co., Ltd.',
+    'Max Well Trading Co., Ltd.',
+    'Max (Myanmar) Manufacturing Co., Ltd.',
+    'Max Logistics Co., Ltd.',
+    'Shwe Yaung Pya Agro Co., Ltd.',
+    'Ayeyar Apex Construction Co., Ltd.'
   ];
 
   const [formData, setFormData] = useState({
@@ -24,12 +27,14 @@ const StaffRegistrationForm = () => {
     name: '',
     nrc: '',
     mobileNumber: '',
+    ayaPayWallet: '', // New field
     email: ''
   });
 
   const [errors, setErrors] = useState({});
   const [submissionStatus, setSubmissionStatus] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showSuccessPopup, setShowSuccessPopup] = useState(false);
 
   const validateField = (name, value) => {
     let error = '';
@@ -52,11 +57,15 @@ const StaffRegistrationForm = () => {
         break;
       case 'nrc':
         if (!value) error = 'NRC is required';
-        else if (!/^[0-9]+\/[a-zA-Z]+\([a-zA-Z]\)[0-9]+$/.test(value)) error = 'Invalid NRC format (e.g., 12/ABC(N)123456)';
+        else if (!/^[0-9]+\/[a-zA-Z]+\([a-zA-Z]\)[0-9]+$/.test(value)) error = 'Invalid NRC format (e.g., 12/ASN(N)123456)';
         break;
       case 'mobileNumber':
         if (!value) error = 'Mobile number is required';
-        else if (!/^(\+?95|0)?9\d{8,9}$/.test(value)) error = 'Invalid Myanmar number (e.g., 09XXXXXXXX)';
+        else if (!/^(\+?95|0)?9\d{8,9}$/.test(value)) error = 'Invalid Mobile number (e.g., 09XXXXXXXX)';
+        break;
+      case 'ayaPayWallet': // New field validation
+        if (!value) error = 'AYA Pay Wallet is required';
+        else if (!/^(\+?95|0)?9\d{8,9}$/.test(value)) error = 'Invalid AYA Pay wallet number (e.g., 09XXXXXXXX)';
         break;
       case 'email':
         if (value && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) error = 'Invalid email format';
@@ -72,7 +81,6 @@ const StaffRegistrationForm = () => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
     
-    // Validate on change only if the field has been touched
     if (errors[name]) {
       setErrors(prev => ({ ...prev, [name]: validateField(name, value) }));
     }
@@ -88,7 +96,7 @@ const StaffRegistrationForm = () => {
     let isValid = true;
     
     Object.keys(formData).forEach(key => {
-      if (key !== 'email' || formData[key]) { // Email is optional
+      if (key !== 'email' || formData[key]) {
         const error = validateField(key, formData[key]);
         if (error) {
           newErrors[key] = error;
@@ -114,7 +122,7 @@ const StaffRegistrationForm = () => {
     
     setIsSubmitting(true);
     
-    // Hidden iframe method (working solution)
+    // Hidden iframe method
     const iframe = document.createElement('iframe');
     iframe.name = 'hidden-form-target';
     iframe.style.display = 'none';
@@ -139,53 +147,63 @@ const StaffRegistrationForm = () => {
     document.body.appendChild(form);
     form.submit();
     
-    // Success handling
-    setSubmissionStatus({ 
-      type: 'success', 
-      message: 'Registration submitted successfully!' 
-    });
+    // Show success popup
+    setShowSuccessPopup(true);
     
-    // Reset form
-    setFormData({
-      organization: '',
-      employeeId: '',
-      dateOfJoining: '',
-      name: '',
-      nrc: '',
-      mobileNumber: '',
-      email: ''
-    });
-    
-    // Clean up after delay
+    // Reset form after submission
     setTimeout(() => {
+      setFormData({
+        organization: '',
+        employeeId: '',
+        dateOfJoining: '',
+        name: '',
+        nrc: '',
+        mobileNumber: '',
+        ayaPayWallet: '',
+        email: ''
+      });
       document.body.removeChild(form);
       document.body.removeChild(iframe);
       setIsSubmitting(false);
-      setSubmissionStatus(null);
     }, 3000);
   };
 
   return (
     <div className="modern-form-container">
+      {/* Success Popup Modal */}
+      {showSuccessPopup && (
+        <div className="success-popup-overlay">
+          <div className="success-popup">
+            <div className="popup-header">
+              <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="#28a745" viewBox="0 0 16 16">
+                <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
+              </svg>
+              <h3>Registration Successful!</h3>
+            </div>
+            <div className="popup-body">
+              <p>Thank you for registering with AYA Mobile Banking 3.0.</p>
+              <p>Your username and password will be sent via SMS within 3 to 5 working days.</p>
+            </div>
+            <button 
+              className="popup-close-btn"
+              onClick={() => setShowSuccessPopup(false)}
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
+
       <div className="modern-form-card">
         <div className="form-header-with-logo">
           <img src={companyLogo} alt="Company Logo" className="company-logo" />
           <div>
-            <h1 className="form-main-title">Mobile 3.0 Staff Registration</h1>
+            <h1 className="form-main-title">AYA Mobile Banking (3.0) Registration for (Internal) Staffs </h1>
             <p className="form-subtitle">Please complete all required fields</p>
           </div>
         </div>
         
         {/* Status Messages */}
-        {submissionStatus?.type === 'success' && (
-          <div className="modern-alert success">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-              <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
-            </svg>
-            {submissionStatus.message}
-          </div>
-        )}
-        
         {submissionStatus?.type === 'error' && (
           <div className="modern-alert error">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
@@ -196,6 +214,7 @@ const StaffRegistrationForm = () => {
         )}
 
         <form onSubmit={handleSubmit} className="modern-staff-form">
+          {/* Existing form fields... */}
           <div className={`modern-form-group ${errors.organization ? 'has-error' : ''}`}>
             <label htmlFor="organization">Organization</label>
             <select
@@ -272,7 +291,7 @@ const StaffRegistrationForm = () => {
             />
             {errors.nrc && <span className="error-message">{errors.nrc}</span>}
           </div>
-
+          {/* Mobile Number Field */}
           <div className={`modern-form-group ${errors.mobileNumber ? 'has-error' : ''}`}>
             <label htmlFor="mobileNumber">Mobile Number</label>
             <input
@@ -288,6 +307,23 @@ const StaffRegistrationForm = () => {
             {errors.mobileNumber && <span className="error-message">{errors.mobileNumber}</span>}
           </div>
 
+          {/* New AYA Pay Wallet Field */}
+          <div className={`modern-form-group ${errors.ayaPayWallet ? 'has-error' : ''}`}>
+            <label htmlFor="ayaPayWallet">AYA Pay Wallet Number</label>
+            <input
+              type="text"
+              id="ayaPayWallet"
+              name="ayaPayWallet"
+              value={formData.ayaPayWallet}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              className="modern-form-control"
+              placeholder="09XXXXXXXX"
+            />
+            {errors.ayaPayWallet && <span className="error-message">{errors.ayaPayWallet}</span>}
+          </div>
+
+          {/* Email Field */}
           <div className={`modern-form-group ${errors.email ? 'has-error' : ''}`}>
             <label htmlFor="email">Email Address (Optional)</label>
             <input
@@ -301,6 +337,14 @@ const StaffRegistrationForm = () => {
               placeholder="your.email@example.com"
             />
             {errors.email && <span className="error-message">{errors.email}</span>}
+          </div>
+
+          {/* Awareness Message */}
+          <div className="awareness-message">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#4361ee" viewBox="0 0 16 16">
+              <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm.93-9.412-1 4.705c-.07.34.029.533.304.533.194 0 .487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703 0-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381 2.29-.287zM8 5.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2z"/>
+            </svg>
+            <span>You will receive your username and password via SMS within 3 to 5 working days.</span>
           </div>
 
           <button 
