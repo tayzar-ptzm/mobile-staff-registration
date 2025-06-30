@@ -23,7 +23,6 @@ const StaffRegistrationForm = () => {
   const [formData, setFormData] = useState({
     organization: '',
     employeeId: '',
-    dateOfJoining: '',
     name: '',
     nrc: '',
     mobileNumber: '',
@@ -47,10 +46,6 @@ const StaffRegistrationForm = () => {
         if (!value) error = 'Employee ID is required';
         else if (!/^[a-zA-Z0-9]{4,20}$/.test(value)) error = 'Invalid Employee ID format';
         break;
-      case 'dateOfJoining':
-        if (!value) error = 'Date of joining is required';
-        else if (new Date(value) > new Date()) error = 'Future date not allowed';
-        break;
       case 'name':
         if (!value) error = 'Full name is required';
         else if (value.length < 3) error = 'Name too short';
@@ -61,11 +56,11 @@ const StaffRegistrationForm = () => {
         break;
       case 'mobileNumber':
         if (!value) error = 'Mobile number is required';
-        else if (!/^(\+?95|0)?9\d{8,9}$/.test(value)) error = 'Invalid Mobile number (e.g., 09XXXXXXXX)';
+        else if (!/^(\+?95|0)?9\d{7,9}$/.test(value)) error = 'Invalid Mobile number (e.g., 09XXXXXXXX)';
         break;
       case 'ayaPayWallet': // New field validation
         if (!value) error = 'AYA Pay Wallet is required';
-        else if (!/^(\+?95|0)?9\d{8,9}$/.test(value)) error = 'Invalid AYA Pay wallet number (e.g., 09XXXXXXXX)';
+        else if (!/^(\+?95|0)?9\d{7,9}$/.test(value)) error = 'Invalid AYA Pay wallet number (e.g., 09XXXXXXXX)';
         break;
       case 'email':
         if (value && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) error = 'Invalid email format';
@@ -155,7 +150,6 @@ const StaffRegistrationForm = () => {
       setFormData({
         organization: '',
         employeeId: '',
-        dateOfJoining: '',
         name: '',
         nrc: '',
         mobileNumber: '',
@@ -246,20 +240,6 @@ const StaffRegistrationForm = () => {
               placeholder="Enter employee ID"
             />
             {errors.employeeId && <span className="error-message">{errors.employeeId}</span>}
-          </div>
-
-          <div className={`modern-form-group ${errors.dateOfJoining ? 'has-error' : ''}`}>
-            <label htmlFor="dateOfJoining">Date of Joining</label>
-            <input
-              type="date"
-              id="dateOfJoining"
-              name="dateOfJoining"
-              value={formData.dateOfJoining}
-              onChange={handleChange}
-              onBlur={handleBlur}
-              className="modern-form-control"
-            />
-            {errors.dateOfJoining && <span className="error-message">{errors.dateOfJoining}</span>}
           </div>
 
           <div className={`modern-form-group ${errors.name ? 'has-error' : ''}`}>
