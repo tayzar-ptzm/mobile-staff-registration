@@ -110,7 +110,7 @@ const StaffRegistrationForm = () => {
     if (!validateForm()) {
       setSubmissionStatus({ 
         type: 'error', 
-        message: 'Please fix the errors in the form' 
+        message: 'Please fill in the required field highlighted in red.' 
       });
       return;
     }
