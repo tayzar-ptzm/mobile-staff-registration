@@ -273,7 +273,7 @@ const StaffRegistrationForm = () => {
           </div>
           {/* Mobile Number Field */}
           <div className={`modern-form-group ${errors.mobileNumber ? 'has-error' : ''}`}>
-            <label htmlFor="mobileNumber">Mobile Number</label>
+            <label htmlFor="mobileNumber">Mobile Number (Use the one currently registered in Mobile Banking 2.0)</label>
             <input
               type="tel"
               id="mobileNumber"
@@ -305,7 +305,7 @@ const StaffRegistrationForm = () => {
 
           {/* Email Field */}
           <div className={`modern-form-group ${errors.email ? 'has-error' : ''}`}>
-            <label htmlFor="email">Email Address (Optional)</label>
+            <label htmlFor="email">Email Address (Use the one currently registered in Mobile Banking 2.0) - Optional</label>
             <input
               type="email"
               id="email"
